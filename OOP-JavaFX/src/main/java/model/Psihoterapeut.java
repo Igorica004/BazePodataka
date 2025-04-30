@@ -1,13 +1,14 @@
 package model;
 
 import java.time.LocalDate;
+import java.sql.Date;
 
 public class Psihoterapeut {
     private int psihoterapeut_id;
     private String ime;
     private String prezime;
     private Long JMBG;
-    private LocalDate datum_rodjenja;
+    private Date datum_rodjenja;
     private String telefon;
     private String email;
     private Integer adresa_id;

@@ -173,7 +173,11 @@ public class ProzorSignUp extends VBox {
 
            Adresa adresa = new Adresa(opstina,ulica,broj);
            Integer adresaId = JDBCUtils.dodajAdresu(adresa);
-           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
+          // Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
+        });
+
+        btnDodaj2.setOnAction((action)->{
+
         });
     }
 }

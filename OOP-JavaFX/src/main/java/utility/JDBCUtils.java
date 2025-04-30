@@ -204,6 +204,20 @@ public class JDBCUtils {
     }
     public static void dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
        String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id,supervizor_id) values (?,?,?,?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,psihoterapeut.getIme());
+            statement.setString(2,psihoterapeut.getPrezime());
+            statement.setDate(3, psihoterapeut.getDatum_rodjenja());
+            statement.setString(4, psihoterapeut.getTelefon());
+            statement.setString(5, psihoterapeut.getEmail());
+            statement.setInt(6, psihoterapeut.getAdresa_id());
+            statement.setInt(7, psihoterapeut.getTip_psihoterapeuta_id());
+            statement.setInt(8, psihoterapeut.getNivo_obrazovanja_id());
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public static void dodajNalog(Nalog nalog){
 
