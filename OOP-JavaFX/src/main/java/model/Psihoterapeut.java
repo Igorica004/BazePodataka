@@ -1,13 +1,13 @@
 package model;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class Psihoterapeut {
     private int psihoterapeut_id;
     private String ime;
     private String prezime;
     private Long JMBG;
-    private LocalDate datum_rodjenja;
+    private Date datum_rodjenja;
     private String telefon;
     private String email;
     private Integer adresa_id;
@@ -16,7 +16,7 @@ public class Psihoterapeut {
     private Integer supervizor_id;
 
 
-    public Psihoterapeut(int psihoterapeut_id, String ime, String prezime, Long JMBG, LocalDate datum_rodjenja,
+    public Psihoterapeut(int psihoterapeut_id, String ime, String prezime, Long JMBG, Date datum_rodjenja,
                          String telefon, String email, Integer adresa_id, Integer tip_psihoterapeuta_id,
                          Integer nivo_obrazovanja_id, Integer supervizor_id) {
         this.psihoterapeut_id = psihoterapeut_id;
@@ -33,7 +33,7 @@ public class Psihoterapeut {
         this.ime = ime;
     }
 
-    public Psihoterapeut(String ime, String prezime, Long JMBG, LocalDate datum_rodjenja, String telefon,
+    public Psihoterapeut(String ime, String prezime, Long JMBG, Date datum_rodjenja, String telefon,
                          String email, Integer adresa_id, Integer tip_psihoterapeuta_id,
                          Integer nivo_obrazovanja_id, Integer supervizor_id) {
         this.ime = ime;

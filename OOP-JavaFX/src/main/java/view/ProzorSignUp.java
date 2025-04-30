@@ -160,7 +160,7 @@ public class ProzorSignUp extends VBox {
            String password = tfPassword.getText();
            String ime = tfIme.getText();
            String prezime = tfPrezime.getText();
-           String jmbg = tfJmbg.getText();
+           Long jmbg = Long.parseLong(tfJmbg.getText());
            String telefon = tfTelefon.getText();
            String email = tfEmail.getText();
            String ulica = tfUlica.getText();
@@ -173,7 +173,7 @@ public class ProzorSignUp extends VBox {
 
            Adresa adresa = new Adresa(opstina,ulica,broj);
            Integer adresaId = JDBCUtils.dodajAdresu(adresa);
-           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
+           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime,jmbg,datumRodjenja,telefon,email,adresaId,tip_id,nivo_obrazovanja,supervizor);
         });
     }
 }
