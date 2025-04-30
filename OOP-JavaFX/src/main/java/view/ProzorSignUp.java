@@ -5,10 +5,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import model.Adresa;
 import model.NivoObrazovanja;
 import model.Psihoterapeut;
 import model.TipPsihoterapeuta;
 import utility.JDBCUtils;
+
+import java.sql.Date;
 
 import static utility.JDBCUtils.getNivoObrazovanja;
 import static utility.JDBCUtils.getTipoviPsihoterapeuta;
@@ -108,6 +111,7 @@ public class ProzorSignUp extends VBox {
         ComboBox<NivoObrazovanja> cbNivoObrazovanja = new ComboBox<>();
         ComboBox<Psihoterapeut> cbSupervizor = new ComboBox<>();
         cbSupervizor.setItems(JDBCUtils.getSertifikovaniPsihoterapeuti());
+        cbSupervizor.getItems().add(0,null);
         cbSupervizor.getSelectionModel().select(0);
 
         cbTip.setItems(getTipoviPsihoterapeuta());
@@ -151,5 +155,25 @@ public class ProzorSignUp extends VBox {
             }
         });
 
+        btnDodaj1.setOnAction((action)->{
+           String username = tfUsername.getText();
+           String password = tfPassword.getText();
+           String ime = tfIme.getText();
+           String prezime = tfPrezime.getText();
+           String jmbg = tfJmbg.getText();
+           String telefon = tfTelefon.getText();
+           String email = tfEmail.getText();
+           String ulica = tfUlica.getText();
+           String broj = tfBroj.getText();
+           String opstina = tfOpstina.getText();
+           Date datumRodjenja = Date.valueOf(dpDatumRodjenja.getValue());
+           Integer tip_id = cbTip.getSelectionModel().getSelectedItem().getId();
+           Integer nivo_obrazovanja = cbNivoObrazovanja.getSelectionModel().getSelectedItem().getNivo_obrazovanja_id();
+           Integer supervizor = cbSupervizor.getSelectionModel().getSelectedItem().getPsihoterapeut_id();
+
+           Adresa adresa = new Adresa(opstina,ulica,broj);
+           Integer adresaId = JDBCUtils.dodajAdresu(adresa);
+           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
+        });
     }
 }

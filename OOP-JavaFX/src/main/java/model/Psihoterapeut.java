@@ -33,6 +33,21 @@ public class Psihoterapeut {
         this.ime = ime;
     }
 
+    public Psihoterapeut(String ime, String prezime, Long JMBG, LocalDate datum_rodjenja, String telefon,
+                         String email, Integer adresa_id, Integer tip_psihoterapeuta_id,
+                         Integer nivo_obrazovanja_id, Integer supervizor_id) {
+        this.ime = ime;
+        this.prezime = prezime;
+        this.JMBG = JMBG;
+        this.datum_rodjenja = datum_rodjenja;
+        this.telefon = telefon;
+        this.email = email;
+        this.adresa_id = adresa_id;
+        this.tip_psihoterapeuta_id = tip_psihoterapeuta_id;
+        this.nivo_obrazovanja_id = nivo_obrazovanja_id;
+        this.supervizor_id = supervizor_id;
+    }
+
     public String getIme() {
         return ime;
     }

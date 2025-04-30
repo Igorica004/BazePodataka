@@ -185,19 +185,22 @@ public class JDBCUtils {
         }
     }
 
-    public static void dodajAdresu(Adresa adresa){
-       String query = "select * from adresa where adresa_id = ?";
+    public static Integer dodajAdresu(Adresa adresa){
+       String query = "select * from adresa where opstina=? and ulica=? and broj=?";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1,adresa.getAdresa_id());
+            statement.setString(1,adresa.getOpsitna());
+            statement.setString(2,adresa.getUlica());
+            statement.setInt(3,adresa.getAdresa_id());
             ResultSet rs = statement.executeQuery();
             if(rs.next())
-                return;
+                return rs.getInt("adresa_id");
 
             query = "insert into";
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
     public static void dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
        String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id,supervizor_id) values (?,?,?,?,?,?,?,?,?,?)";

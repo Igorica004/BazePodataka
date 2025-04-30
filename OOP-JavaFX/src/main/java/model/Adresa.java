@@ -13,6 +13,12 @@ public class Adresa {
         this.broj = broj;
     }
 
+    public Adresa(String opsitna, String ulica, String broj) {
+        this.opsitna = opsitna;
+        this.ulica = ulica;
+        this.broj = broj;
+    }
+
     public Integer getAdresa_id() {
         return adresa_id;
     }
