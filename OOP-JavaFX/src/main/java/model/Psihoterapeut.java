@@ -1,6 +1,5 @@
 package model;
 
-import java.time.LocalDate;
 import java.sql.Date;
 
 public class Psihoterapeut {
@@ -17,7 +16,7 @@ public class Psihoterapeut {
     private Integer supervizor_id;
 
 
-    public Psihoterapeut(int psihoterapeut_id, String ime, String prezime, Long JMBG, LocalDate datum_rodjenja,
+    public Psihoterapeut(int psihoterapeut_id, String ime, String prezime, Long JMBG, Date datum_rodjenja,
                          String telefon, String email, Integer adresa_id, Integer tip_psihoterapeuta_id,
                          Integer nivo_obrazovanja_id, Integer supervizor_id) {
         this.psihoterapeut_id = psihoterapeut_id;
@@ -34,7 +33,7 @@ public class Psihoterapeut {
         this.ime = ime;
     }
 
-    public Psihoterapeut(String ime, String prezime, Long JMBG, LocalDate datum_rodjenja, String telefon,
+    public Psihoterapeut(String ime, String prezime, Long JMBG, Date datum_rodjenja, String telefon,
                          String email, Integer adresa_id, Integer tip_psihoterapeuta_id,
                          Integer nivo_obrazovanja_id, Integer supervizor_id) {
         this.ime = ime;
@@ -81,11 +80,11 @@ public class Psihoterapeut {
         this.JMBG = JMBG;
     }
 
-    public LocalDate getDatum_rodjenja() {
+    public Date getDatum_rodjenja() {
         return datum_rodjenja;
     }
 
-    public void setDatum_rodjenja(LocalDate datum_rodjenja) {
+    public void setDatum_rodjenja(Date datum_rodjenja) {
         this.datum_rodjenja = datum_rodjenja;
     }
 

@@ -92,7 +92,7 @@ public class JDBCUtils {
            String ime = rs.getString("ime");
            String prezime = rs.getString("prezime");
            Long JMBG = rs.getLong("JMBG");
-           LocalDate datum_rodjenja = rs.getDate("datum_rodjenja").toLocalDate();
+           Date datum_rodjenja = rs.getDate("datum_rodjenja");
            String telefon = rs.getString("telefon");
            String email = rs.getString("email" );
            Integer adresa_id = rs.getInt("adresa_id");
@@ -196,11 +196,25 @@ public class JDBCUtils {
             if(rs.next())
                 return rs.getInt("adresa_id");
 
-            query = "insert into";
+            query = "insert into adresa (opstina,ulica,broj) values (?,?,?)";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,adresa.getOpsitna());
+            statement.setString(2,adresa.getUlica());
+            statement.setInt(3,adresa.getAdresa_id());
+            statement.executeUpdate();
+
+            query = "select * from adresa where opstina=? and ulica=? and broj=?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,adresa.getOpsitna());
+            statement.setString(2,adresa.getUlica());
+            statement.setInt(3,adresa.getAdresa_id());
+            rs = statement.executeQuery();
+            rs.next();
+            return rs.getInt("adresa_id");
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
     public static void dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
        String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id,supervizor_id) values (?,?,?,?,?,?,?,?,?,?)";
