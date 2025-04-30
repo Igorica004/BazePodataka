@@ -234,6 +234,24 @@ public class JDBCUtils {
         }
     }
     public static void dodajNalog(Nalog nalog){
+        String query = "insert into nalog (username, password, psihoterapeut_id) values (?, ?, ?)";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,nalog.getUsername());
+            statement.setString(2,nalog.getPassword());
+            statement.setInt(3, nalog.getPsihoterapeut_id());
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Nalog uspešno dodat.");
+            } else {
+                System.out.println("Dodavanje naloga nije uspelo.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

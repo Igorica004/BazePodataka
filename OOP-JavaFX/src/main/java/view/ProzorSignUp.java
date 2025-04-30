@@ -1,14 +1,13 @@
 package view;
 
+import app.App;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import model.Adresa;
-import model.NivoObrazovanja;
-import model.Psihoterapeut;
-import model.TipPsihoterapeuta;
+import model.*;
 import utility.JDBCUtils;
 
 import java.sql.Date;
@@ -174,10 +173,16 @@ public class ProzorSignUp extends VBox {
            Adresa adresa = new Adresa(opstina,ulica,broj);
            Integer adresaId = JDBCUtils.dodajAdresu(adresa);
            Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime,jmbg,datumRodjenja,telefon,email,adresaId,tip_id,nivo_obrazovanja,supervizor);
-          // Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
         });
 
         btnDodaj2.setOnAction((action)->{
+            String username = tfUsername.getText();
+            String password = tfPassword.getText();
+            Integer id = cbPostojeci.getSelectionModel().getSelectedItem().getTip_psihoterapeuta_id();
+            Nalog nalog = new Nalog(username, password, id);
+            JDBCUtils.dodajNalog(nalog);
+
+           App.window.setScene(new Scene(new ProzorGlavni(id),800,720));
 
         });
     }
