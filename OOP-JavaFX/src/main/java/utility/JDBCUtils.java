@@ -3,6 +3,7 @@ package utility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
+import view.Fakultet;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -86,7 +87,7 @@ public class JDBCUtils {
         }
     }
 
-    public static Psihoterapeut getPsihoterapeutFromResultSet(ResultSet rs){
+    private static Psihoterapeut getPsihoterapeutFromResultSet(ResultSet rs){
        try {
            Integer psihoterapeut_id = rs.getInt("psihoterapeut_id");
            String ime = rs.getString("ime");
@@ -119,6 +120,53 @@ public class JDBCUtils {
       }
    }
 
+   public static Adresa getAdresaFromResultSet(ResultSet rs){
+
+       try {
+           return new Adresa(rs.getInt("adresa_id"),rs.getString("opstina"),rs.getString("ulica"),rs.getString("broj"));
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+   }
+
+   public static Adresa getAdresaById(int id){
+       String query = "select * from adresa where ?=adresa_id";
+       try {
+           PreparedStatement statement = connection.prepareStatement(query);
+           statement.setInt(1,id);
+           ResultSet rs = statement.executeQuery();
+           if(rs.next()){
+               return getAdresaFromResultSet(rs);
+           }
+           return null;
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+   }
+
+   private static TipPsihoterapeuta getTipPsihoterapeutaFromResultSet(ResultSet rs){
+       try {
+           return new TipPsihoterapeuta(rs.getInt("tip_psihoterapeuta_id"),rs.getString("naziv"));
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+   }
+
+   public static TipPsihoterapeuta getTipPsihoterapeutaById(int id){
+        String query = "select * from tip_psihoterapeuta where ?=tip_psihoterapeuta_id";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getTipPsihoterapeutaFromResultSet(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+   }
+
    public static ObservableList<Psihoterapeut> getPsihoterapeutiBezNaloga(){
        ObservableList<Psihoterapeut> psihoterapeuti = FXCollections.observableArrayList();
        String query = "select * from psihoterapeut as p left join nalog as n on p.psihoterapeut_id = n.psihoterapeut_id where n.psihoterapeut_id is null";
@@ -147,7 +195,7 @@ public class JDBCUtils {
            throw new RuntimeException(e);
        }
    }
-    public static Klijent getKlijentiFromResultSet(ResultSet rs){
+    private static Klijent getKlijentiFromResultSet(ResultSet rs){
         try {
             Integer klijent_id = rs.getInt("klijent_id");
             String ime = rs.getString("ime");
@@ -166,7 +214,7 @@ public class JDBCUtils {
             throw new RuntimeException();
         }
     }
-    public static NivoObrazovanja getNivoObrazovanjaFromResultSet(ResultSet rs){
+    private static NivoObrazovanja getNivoObrazovanjaFromResultSet(ResultSet rs){
         try {
             Integer nivo_obrazovanja_id = rs.getInt("nivo_obrazovanja_id");
             String naziv = rs.getString("naziv");
@@ -175,7 +223,21 @@ public class JDBCUtils {
             throw new RuntimeException();
         }
     }
-    public static TipPsihoterapeuta getTipoviFromResultSet(ResultSet rs) {
+    public static NivoObrazovanja getNivoObrazovanjaById(int id){
+       String query = "select * from nivo_obrazovanja where ?=nivo_obrazovanja_id";
+       try {
+           PreparedStatement statement = connection.prepareStatement(query);
+           statement.setInt(1,id);
+           ResultSet rs = statement.executeQuery();
+           if(rs.next()){
+               return getNivoObrazovanjaFromResultSet(rs);
+           }
+           return null;
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
+    private static TipPsihoterapeuta getTipoviFromResultSet(ResultSet rs) {
         try {
             String naziv = rs.getString("naziv");
             Integer tip_id = rs.getInt("tip_psihoterapeuta_id");
@@ -278,5 +340,64 @@ public class JDBCUtils {
         }
 
         return null;
+    }
+    public static Fakultet getFakultetFromResultSet(ResultSet rs){
+        try {
+            return new Fakultet(rs.getString("naziv"),rs.getInt("univerzitet_id"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static Fakultet getFakultetById(int id){
+       String query = "select * from fakultet where ?=fakultet_id";
+       try {
+           PreparedStatement statement = connection.prepareStatement(query);
+           statement.setInt(1,id);
+           ResultSet rs = statement.executeQuery();
+           if(rs.next()){
+               return getFakultetFromResultSet(rs);
+           }
+           return null;
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
+    public static ObservableList<Fakultet> getFakultetiByPsihoterapeutId(int psihoterapeut_id){
+        ObservableList<Fakultet> fakulteti = FXCollections.observableArrayList();
+        String query = "SELECT f.* FROM fakultet f JOIN psihoterapeut_fakultet pf ON f.fakultet_id = pf.fakultet_id WHERE pf.psihoterapeut_id = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeut_id);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                fakulteti.add(getFakultetFromResultSet(rs));
+            }
+            return fakulteti;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Univerzitet getUniverzitetFromResultSet(ResultSet rs){
+        try {
+            return new Univerzitet(rs.getString("naziv"),rs.getInt("usmerenje_univerziteta_id"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Univerzitet getUniverzitetById(int id){
+       String query = "select * from univerzitet where ?=univerzitet_id";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getUniverzitetFromResultSet(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

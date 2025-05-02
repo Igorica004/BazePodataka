@@ -189,7 +189,7 @@ public class ProzorSignUp extends VBox {
             Nalog nalog = new Nalog(username, password, id);
             JDBCUtils.dodajNalog(nalog);
 
-           App.window.setScene(new Scene(new ProzorGlavni(id),800,720));
+            App.window.setScene(new Scene(new ProzorGlavni(id),800,720));
 
         });
     }

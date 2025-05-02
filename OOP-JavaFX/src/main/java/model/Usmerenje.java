@@ -1,6 +1,6 @@
 package model;
 
 public class Usmerenje {
-    private int usmerenjeID;
+    private int usmerenje_id;
     private String naziv;
 }
