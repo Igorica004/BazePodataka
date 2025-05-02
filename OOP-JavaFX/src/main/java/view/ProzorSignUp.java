@@ -162,23 +162,30 @@ public class ProzorSignUp extends VBox {
            Long jmbg = Long.parseLong(tfJmbg.getText());
            String telefon = tfTelefon.getText();
            String email = tfEmail.getText();
+           String opstina = tfOpstina.getText();
            String ulica = tfUlica.getText();
            String broj = tfBroj.getText();
-           String opstina = tfOpstina.getText();
            Date datumRodjenja = Date.valueOf(dpDatumRodjenja.getValue());
            Integer tip_id = cbTip.getSelectionModel().getSelectedItem().getId();
            Integer nivo_obrazovanja = cbNivoObrazovanja.getSelectionModel().getSelectedItem().getNivo_obrazovanja_id();
            Integer supervizor = cbSupervizor.getSelectionModel().getSelectedItem().getPsihoterapeut_id();
 
            Adresa adresa = new Adresa(opstina,ulica,broj);
-           Integer adresaId = JDBCUtils.dodajAdresu(adresa);
-           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime,jmbg,datumRodjenja,telefon,email,adresaId,tip_id,nivo_obrazovanja,supervizor);
+           Integer adresa_id = JDBCUtils.dodajAdresu(adresa);
+           Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime,jmbg,datumRodjenja,telefon,email,adresa_id,tip_id,nivo_obrazovanja,supervizor);
+           Integer psihoterapeut_id = JDBCUtils.dodajPsihoterapeuta(psihoterapeut);
+           if(psihoterapeut_id == null)
+               throw new RuntimeException("Neuspesno napravljen novi psihoterapeut");
+           Nalog nalog = new Nalog(username,password,psihoterapeut_id);
+           JDBCUtils.dodajNalog(nalog);
+            // Psihoterapeut psihoterapeut = new Psihoterapeut(ime,prezime)
+            App.window.setScene(new Scene(new ProzorGlavni(psihoterapeut_id),800,720));
         });
 
         btnDodaj2.setOnAction((action)->{
             String username = tfUsername.getText();
             String password = tfPassword.getText();
-            Integer id = cbPostojeci.getSelectionModel().getSelectedItem().getTip_psihoterapeuta_id();
+            Integer id = cbPostojeci.getSelectionModel().getSelectedItem().getPsihoterapeut_id();
             Nalog nalog = new Nalog(username, password, id);
             JDBCUtils.dodajNalog(nalog);
 

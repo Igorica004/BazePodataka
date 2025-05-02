@@ -191,7 +191,7 @@ public class JDBCUtils {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1,adresa.getOpsitna());
             statement.setString(2,adresa.getUlica());
-            statement.setInt(3,adresa.getAdresa_id());
+            statement.setString(3,adresa.getBroj());
             ResultSet rs = statement.executeQuery();
             if(rs.next())
                 return rs.getInt("adresa_id");
@@ -200,14 +200,14 @@ public class JDBCUtils {
             statement = connection.prepareStatement(query);
             statement.setString(1,adresa.getOpsitna());
             statement.setString(2,adresa.getUlica());
-            statement.setInt(3,adresa.getAdresa_id());
+            statement.setString(3,adresa.getBroj());
             statement.executeUpdate();
 
             query = "select * from adresa where opstina=? and ulica=? and broj=?";
             statement = connection.prepareStatement(query);
             statement.setString(1,adresa.getOpsitna());
             statement.setString(2,adresa.getUlica());
-            statement.setInt(3,adresa.getAdresa_id());
+            statement.setString(3,adresa.getBroj());
             rs = statement.executeQuery();
             rs.next();
             return rs.getInt("adresa_id");
@@ -216,42 +216,67 @@ public class JDBCUtils {
             throw new RuntimeException(e);
         }
     }
-    public static void dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
+    public static Integer dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
        String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id,supervizor_id) values (?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1,psihoterapeut.getIme());
             statement.setString(2,psihoterapeut.getPrezime());
-            statement.setDate(3, psihoterapeut.getDatum_rodjenja());
-            statement.setString(4, psihoterapeut.getTelefon());
-            statement.setString(5, psihoterapeut.getEmail());
-            statement.setInt(6, psihoterapeut.getAdresa_id());
-            statement.setInt(7, psihoterapeut.getTip_psihoterapeuta_id());
-            statement.setInt(8, psihoterapeut.getNivo_obrazovanja_id());
+            statement.setLong(3, psihoterapeut.getJMBG());
+            statement.setDate(4, psihoterapeut.getDatum_rodjenja());
+            statement.setString(5, psihoterapeut.getTelefon());
+            statement.setString(6, psihoterapeut.getEmail());
+            statement.setInt(7, psihoterapeut.getAdresa_id());
+            statement.setInt(8, psihoterapeut.getTip_psihoterapeuta_id());
+            statement.setInt(9, psihoterapeut.getNivo_obrazovanja_id());
+            statement.setInt(10, psihoterapeut.getSupervizor_id());
+            statement.execute();
+
+            query = "select * from psihoterapeut where ime=? and prezime=? and JMBG=? and datum_rodjenja=? and telefon=? and email=? and adresa_id=? and tip_psihoterapeuta_id=? and nivo_obrazovanja_id=? and supervizor_id=?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,psihoterapeut.getIme());
+            statement.setString(2,psihoterapeut.getPrezime());
+            statement.setLong(3, psihoterapeut.getJMBG());
+            statement.setDate(4, psihoterapeut.getDatum_rodjenja());
+            statement.setString(5, psihoterapeut.getTelefon());
+            statement.setString(6, psihoterapeut.getEmail());
+            statement.setInt(7, psihoterapeut.getAdresa_id());
+            statement.setInt(8, psihoterapeut.getTip_psihoterapeuta_id());
+            statement.setInt(9, psihoterapeut.getNivo_obrazovanja_id());
+            statement.setInt(10, psihoterapeut.getSupervizor_id());
+            ResultSet rs = statement.executeQuery();
+            if(rs.next())
+                return rs.getInt("psihoterapeut_id");
+            else
+                return null;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public static void dodajNalog(Nalog nalog){
+    public static Integer dodajNalog(Nalog nalog){
         String query = "insert into nalog (username, password, psihoterapeut_id) values (?, ?, ?)";
-
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1,nalog.getUsername());
             statement.setString(2,nalog.getPassword());
             statement.setInt(3, nalog.getPsihoterapeut_id());
-
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
-                System.out.println("Nalog uspešno dodat.");
-            } else {
-                System.out.println("Dodavanje naloga nije uspelo.");
-            }
+            statement.execute();
+            query = "select * from nalog where username=? and password=? and psihoterapeut_id=?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,nalog.getUsername());
+            statement.setString(2,nalog.getPassword());
+            statement.setInt(3,nalog.getPsihoterapeut_id());
+            ResultSet rs = statement.executeQuery();
+            if(rs.next())
+                return rs.getInt("nalog_id");
+            else
+                return null;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return null;
     }
 }
