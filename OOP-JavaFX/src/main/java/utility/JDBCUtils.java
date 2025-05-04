@@ -6,7 +6,6 @@ import model.*;
 import view.Fakultet;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.Properties;
 
 public class JDBCUtils {
@@ -54,7 +53,7 @@ public class JDBCUtils {
         }
 
     }
-    public static ObservableList<Klijent> getKlijentByPsihoterapeutId(Integer id){
+    public static ObservableList<Klijent> getKlijentiByPsihoterapeutId(Integer id){
         ObservableList<Klijent> klijenti = FXCollections.observableArrayList();
       //  String query = "select * from klijent";
         String query = "select * from klijent where ?=psihoterapeut_id";
@@ -200,7 +199,7 @@ public class JDBCUtils {
             Integer klijent_id = rs.getInt("klijent_id");
             String ime = rs.getString("ime");
             String prezime = rs.getString("prezime");
-            LocalDate datum_rodjenja = rs.getDate("datum_rodjenja").toLocalDate();
+            Date datum_rodjenja = Date.valueOf(rs.getDate("datum_rodjenja").toLocalDate());
             String pol = rs.getString("pol");
             String email = rs.getString("email");
             String telefon = rs.getString("telefon");
@@ -340,6 +339,46 @@ public class JDBCUtils {
         }
 
         return null;
+    } public static Integer dodajKlijenta(Klijent klijent){
+        String query = "insert into klijent (ime,prezime,datum_rodjenja,pol,email,telefon,prva_terapija,opis_problema,psihoterapeut_id) values (?, ?, ?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,klijent.getIme());
+            statement.setString(2,klijent.getPrezime());
+            statement.setDate(3,klijent.getDatum());
+            statement.setString(4,klijent.getPol());
+            statement.setString(5,klijent.getEmail());
+            statement.setString(6,klijent.getTelefon());
+            statement.setInt(7,klijent.getPrvaTerapija());
+            statement.setString(8,klijent.getOpisProblema());
+            statement.setInt(9,klijent.getPsihoterapeut_id());
+
+            statement.execute();
+            query = "select * from klijent where ime=? and prezime=? and datum_rodjenja=? and pol=? and email=? and telefon=? and prva_terapija=? and opis_problema=? and psihoterapeut_id=?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,klijent.getIme());
+            statement.setString(2,klijent.getPrezime());
+            statement.setDate(3,klijent.getDatum());
+            statement.setString(4,klijent.getPol());
+            statement.setString(5,klijent.getEmail());
+            statement.setString(6,klijent.getTelefon());
+            statement.setInt(7,klijent.getPrvaTerapija());
+            statement.setString(8,klijent.getOpisProblema());
+            statement.setInt(9,klijent.getPsihoterapeut_id());
+          ResultSet rs = statement.executeQuery();
+            if(rs.next())
+                return rs.getInt("klijent_id");
+            else
+                return null;
+
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+       return null;
     }
     public static Fakultet getFakultetFromResultSet(ResultSet rs){
         try {
@@ -400,4 +439,8 @@ public class JDBCUtils {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
 }
