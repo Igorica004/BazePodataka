@@ -168,7 +168,10 @@ public class ProzorSignUp extends VBox {
            Date datumRodjenja = Date.valueOf(dpDatumRodjenja.getValue());
            Integer tip_id = cbTip.getSelectionModel().getSelectedItem().getId();
            Integer nivo_obrazovanja = cbNivoObrazovanja.getSelectionModel().getSelectedItem().getNivo_obrazovanja_id();
-           Integer supervizor = cbSupervizor.getSelectionModel().getSelectedItem().getPsihoterapeut_id();
+           Psihoterapeut supervizor_psihoterapeut = cbSupervizor.getSelectionModel().getSelectedItem();
+           Integer supervizor = null;
+            if(supervizor_psihoterapeut != null)
+                supervizor = supervizor_psihoterapeut.getPsihoterapeut_id();
 
            Adresa adresa = new Adresa(opstina,ulica,broj);
            Integer adresa_id = JDBCUtils.dodajAdresu(adresa);

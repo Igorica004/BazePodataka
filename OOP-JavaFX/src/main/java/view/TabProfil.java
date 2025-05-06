@@ -37,7 +37,7 @@ public class TabProfil extends Tab {
         Adresa adresa = JDBCUtils.getAdresaById(psihoterapeut.getAdresa_id());
         lbAdresa.setText(String.format("Adresa: %s %s, %s",adresa.getUlica(),adresa.getBroj(),adresa.getOpsitna()));
 
-        TipPsihoterapeuta tipPsihoterapeuta = JDBCUtils.getTipPsihoterapeutaById(psihoterapeut.getPsihoterapeut_id());
+        TipPsihoterapeuta tipPsihoterapeuta = JDBCUtils.getTipPsihoterapeutaById(psihoterapeut.getTip_psihoterapeuta_id ());
         lbTipPsihoterapeuta.setText(String.format("Tip psihoterapeuta: %s",tipPsihoterapeuta.getNaziv()));
 
         NivoObrazovanja nivoObrazovanja = JDBCUtils.getNivoObrazovanjaById(psihoterapeut.getNivo_obrazovanja_id());

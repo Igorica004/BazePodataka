@@ -278,6 +278,43 @@ public class JDBCUtils {
         }
     }
     public static Integer dodajPsihoterapeuta(Psihoterapeut psihoterapeut){
+       if(psihoterapeut.getSupervizor_id() == null){
+
+           String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id) values (?,?,?,?,?,?,?,?,?)";
+           try {
+               PreparedStatement statement = connection.prepareStatement(query);
+               statement.setString(1,psihoterapeut.getIme());
+               statement.setString(2,psihoterapeut.getPrezime());
+               statement.setLong(3, psihoterapeut.getJMBG());
+               statement.setDate(4, psihoterapeut.getDatum_rodjenja());
+               statement.setString(5, psihoterapeut.getTelefon());
+               statement.setString(6, psihoterapeut.getEmail());
+               statement.setInt(7, psihoterapeut.getAdresa_id());
+               statement.setInt(8, psihoterapeut.getTip_psihoterapeuta_id());
+               statement.setInt(9, psihoterapeut.getNivo_obrazovanja_id());
+               statement.execute();
+
+               query = "select * from psihoterapeut where ime=? and prezime=? and JMBG=? and datum_rodjenja=? and telefon=? and email=? and adresa_id=? and tip_psihoterapeuta_id=? and nivo_obrazovanja_id=?";
+               statement = connection.prepareStatement(query);
+               statement.setString(1,psihoterapeut.getIme());
+               statement.setString(2,psihoterapeut.getPrezime());
+               statement.setLong(3, psihoterapeut.getJMBG());
+               statement.setDate(4, psihoterapeut.getDatum_rodjenja());
+               statement.setString(5, psihoterapeut.getTelefon());
+               statement.setString(6, psihoterapeut.getEmail());
+               statement.setInt(7, psihoterapeut.getAdresa_id());
+               statement.setInt(8, psihoterapeut.getTip_psihoterapeuta_id());
+               statement.setInt(9, psihoterapeut.getNivo_obrazovanja_id());
+               ResultSet rs = statement.executeQuery();
+               if(rs.next())
+                   return rs.getInt("psihoterapeut_id");
+               else
+                   return null;
+
+           } catch (SQLException e) {
+               throw new RuntimeException(e);
+           }
+       }
        String query = "insert into psihoterapeut (ime,prezime,JMBG,datum_rodjenja,telefon,email,adresa_id,tip_psihoterapeuta_id,nivo_obrazovanja_id,supervizor_id) values (?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
