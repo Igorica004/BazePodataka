@@ -477,7 +477,208 @@ public class JDBCUtils {
         }
     }
 
+    // Metoda koja vraća naziv valute na osnovu ID-a
+    private static String getValutaName(int valutaId) {
+        String valutaName = "";
+        String query = "SELECT naziv FROM valuta WHERE valuta_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, valutaId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                valutaName = rs.getString("naziv");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return valutaName;
+    }
 
+    // Metoda koja vraća naziv načina plačanja na osnovu ID-a
+    private static String getNacinPlacanjaName(int nacinPlacanjaId) {
+        String nacinPlacanjaName = "";
+        String query = "SELECT naziv FROM nacin_placanja WHERE nacin_placanja_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, nacinPlacanjaId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                nacinPlacanjaName = rs.getString("naziv");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return nacinPlacanjaName;
+    }
+    private static Valuta getValutaFromResultSet(ResultSet rs) {
+       try{
+           Integer valutaId = rs.getInt("valuta_id");
+           String naziv = rs.getString("naziv");
+           String skraceno = rs.getString("skraceno");
+           Valuta valuta = new Valuta(valutaId,naziv, skraceno);
+
+               return valuta;
+
+       }catch (SQLException e){
+           throw new RuntimeException(e);
+       }
+
+    }
+
+
+    private static Placanje getPlacanjeFromResultSet(ResultSet rs) {
+        try {
+
+
+            // Uzmi podatke iz ResultSet-a
+            int klijentId = rs.getInt("klijent_id");
+            int valutaId = rs.getInt("valuta_id");
+            int nacinPlacanjaId = rs.getInt("nacin_placanja_id");
+            int rata = rs.getInt("rata");
+            Double iznos = rs.getDouble("iznos");  // Iznos sada kao double
+            String svrha = rs.getString("svrha");
+            int seansaId = rs.getInt("seansa_id");
+            int placanjeId = rs.getInt("placanje_id");
+
+
+            String nacinPlacanja = getNacinPlacanjaName(nacinPlacanjaId);
+
+            // Kreiraj i vrati objekat Placanje sa svim podacima
+            return new Placanje(placanjeId,svrha,rata,iznos,nacinPlacanjaId,valutaId,seansaId,klijentId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ObservableList<Placanje> getPlacanjaByPsihoterapeutId(Integer psihoterapeutId) {
+        ObservableList<Placanje> placanja = FXCollections.observableArrayList();
+        String query = "select * from placanje join klijent on placanje.klijent_id=klijent.klijent_id where klijent.psihoterapeut_id=?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, psihoterapeutId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                placanja.add(getPlacanjeFromResultSet(rs));  // Dodaj rezultat u listu
+            }
+            return placanja;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ObservableList<Valuta> sveValute() {
+        ObservableList<Valuta> valute = FXCollections.observableArrayList();
+        String query = "SELECT naziv,skraceno FROM valuta"; // Preporučujem da vratiš i ID, ne samo naziv
+
+        try (
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                String naziv = rs.getString("naziv");
+                String skracenica = rs.getString("skraceno");
+                valute.add(new Valuta(naziv,skracenica)); // Pretpostavljam da tvoja klasa Valuta ima konstruktor Valuta(int, String)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ili loguj na drugi način u stvarnom projektu
+        }
+
+        return valute;
+    }
+
+    public static ObservableList<NacinPlacanja> sviNaciniPlacanja() {
+
+        ObservableList<NacinPlacanja> naciniPlacanja = FXCollections.observableArrayList();
+        String query = "SELECT naziv FROM nacin_placanja"; // Preporučujem da vratiš i ID, ne samo naziv
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                String naziv = rs.getString("naziv");
+                naciniPlacanja.add(new NacinPlacanja(naziv)); // Pretpostavljam da tvoja klasa Valuta ima konstruktor Valuta(int, String)
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Ili loguj na drugi način u stvarnom projektu
+        }
+
+        return naciniPlacanja;
+
+    }
+
+    public static Klijent getKlijentById(Integer klijentId)  {
+        String query = "select * from klijent where klijent_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,klijentId);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getKlijentiFromResultSet(rs);
+            }
+            return  null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static Valuta getValutaById(Integer valutaId) {
+        String query = "select * from valuta where valuta_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,valutaId);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getValutaFromResultSet(rs);
+            }
+            return  null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
+
+
+
+/*
+    public static ObservableList<Termin> getTermini(Integer psihoterapeutId) {
+        ObservableList<Termin> termini = FXCollections.observableArrayList();
+        String query = """
+        SELECT t.termin_id, t.datum, t.vreme, s.klijent_id
+        FROM termin t
+        LEFT JOIN seansa s ON t.termin_id = s.seansa_id
+        WHERE t.psihoterapeut_id = ?
+    """;
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, psihoterapeutId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Integer klijentId = rs.getInt("klijent_id");
+               String ime = getKlijentIme(klijentId);  // Poziv metode za ime
+               String prezime = getKlijentPrezime(klijentId);  // Poziv metode za prezime
+
+                Termin termin = new Termin(
+                        rs.getInt("termin_id"),
+                        klijentId,
+                        rs.getDate("datum"),
+                        rs.getTime("vreme").toLocalTime().getHour() * 100 + rs.getTime("vreme").toLocalTime().getMinute(),
+                        ime,
+                        prezime
+                );
+                termini.add(termin);
+            }
+            return termini;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+*/
 
 
 }

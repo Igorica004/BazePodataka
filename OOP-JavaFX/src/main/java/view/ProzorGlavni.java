@@ -27,7 +27,7 @@ public class ProzorGlavni extends VBox {
         TabPane tabbedPane = new TabPane();
         tabbedPane.getTabs().addAll(
                 new TabKlijenti(psihoterapeutId),
-                new TabPlacanja(),
+                new TabPlacanja(psihoterapeutId),
                 new TabProfil(psihoterapeutId),
                 new TabSeanse(),
                 new TabTermini(),

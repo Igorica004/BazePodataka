@@ -3,6 +3,7 @@ module bazePodataka {
     requires javafx.graphics;
     requires javafx.base;
     requires java.sql;
+    opens model to javafx.base;
 
 
     exports app;
