@@ -127,4 +127,9 @@ public class Klijent {
     public void setPrvaTerapija(Integer prvaTerapija) {
         this.prvaTerapija = prvaTerapija;
     }
+
+    @Override
+    public String toString() {
+        return ime+" "+prezime;
+    }
 }

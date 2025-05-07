@@ -5,9 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import model.NacinPlacanja;
-import model.Placanje;
-import model.Valuta;
+import model.*;
 import utility.JDBCUtils;
 
 public class TabPlacanja extends Tab {
@@ -55,10 +53,12 @@ public class TabPlacanja extends Tab {
         TextField tfRata = new TextField();
         Label lbIznos = new Label("Iznos");
         TextField tfIznos = new TextField();
-        gp.add(lbIme, 0, 0);
-        gp.add(tfIme, 1, 0);
-        gp.add(lbPrezime, 0, 1);
-        gp.add(tfPrezima, 1, 1);
+       ComboBox<Klijent> cbKlijenti = new ComboBox<>();
+        cbKlijenti.setItems(JDBCUtils.getKlijentiByPsihoterapeutId(psihoterapeutId));
+        cbKlijenti.getSelectionModel().select(0);
+        Label l;
+        gp.add( l = new Label("Klijent"), 0, 0);
+        gp.add(cbKlijenti, 1, 0);
         gp.add(lbValuta, 0, 2);
         gp.add(cbValuta, 1, 2);
         gp.add(lbNacinPlacanja, 0, 3);
@@ -70,7 +70,14 @@ public class TabPlacanja extends Tab {
         gp.add(lbIznos, 0, 6);
         gp.add(tfIznos, 1, 6);
         Button btnNovoPlacanje = new Button("Dodaj novo placanje");
-        gp.add(btnNovoPlacanje, 0, 7);
+        ComboBox<Seansa> cbSeansa = new ComboBox<>();
+        gp.add(l = new Label("Seansa"), 0, 7);
+        gp.add(cbSeansa, 1, 7);
+        gp.add(btnNovoPlacanje, 0, 8);
+
+       cbKlijenti.setOnAction((action) -> {
+           cbSeansa.setItems(JDBCUtils.getNeplaceneSeanseByKlijentId(cbKlijenti.getSelectionModel().getSelectedItem().getKlijentID()));
+       });
 
         gp.setHgap(10);
         gp.setVgap(10);
@@ -86,8 +93,29 @@ public class TabPlacanja extends Tab {
         tv.setItems(JDBCUtils.getPlacanjaByPsihoterapeutId(psihoterapeutId));  // Popunjava TableView sa placanjem
 
         btnNovoPlacanje.setOnAction((action) -> {
-            // Implementiraj logiku za dodavanje novog placanja
+            Klijent k = cbKlijenti.getSelectionModel().getSelectedItem();
+            Valuta valuta = cbValuta.getSelectionModel().getSelectedItem();
+            NacinPlacanja nacinPlacanja = cbNacinPlacanja.getSelectionModel().getSelectedItem();
+            String svrha = tfSvrha.getText();
+            int rata = Integer.parseInt(tfRata.getText());
+            double iznos = Double.parseDouble(tfIznos.getText());
+            int seansaId = 1;
+
+/*
+Columns:
+placanje_id int AI PK
+svrha varchar(50)
+rata int
+iznos double(6,3)
+nacin_placanja_id int
+valuta_id int
+seansa_id int
+klijent_id int
+ */
+           Placanje placanje = new Placanje(svrha,rata,iznos,nacinPlacanja.getNacinPlacanjaId(),valuta.getValutaId(),seansaId,k.getKlijentID());
+           tv.setItems(JDBCUtils.dodajPlacanje(placanje));
         });
+
     }
 
 }

@@ -9,6 +9,7 @@ public class Placanje {
     String prezime;
 
     Integer nacinPlacanjaId;
+    String  nacinPlacanja;
     String svrha;
     int rata;
     Double iznos;
@@ -26,6 +27,8 @@ valuta_id int
 seansa_id int
 klijent_id int
      */
+
+
     public Placanje(Integer placanje_id, String svrha, int rata, Double iznos, Integer nacinPlacanjaId, Integer valuta_id,
                     Integer seansa_id, Integer klijentId) {
 
@@ -42,6 +45,46 @@ klijent_id int
         prezime = klijent.getPrezime();
         Valuta valuta = JDBCUtils.getValutaById(valuta_id);
         this.valuta = valuta.getNaziv();
+        if(this.seansa_id==null){
+            this.seansa_id = 0;
+        }
+    }
+/*
+Columns:
+placanje_id int AI PK
+svrha varchar(50)
+rata int
+iznos double(6,3)
+nacin_placanja_id int
+valuta_id int
+seansa_id int
+klijent_id int
+ */
+    public Placanje( String svrha, int rata, Double iznos, Integer nacinPlacanjaId, Integer valuta_id,
+                    Integer seansa_id, Integer klijentId) {
+
+        this.svrha = svrha;
+        this.rata = rata;
+        this.iznos = iznos;
+        this.nacinPlacanjaId = nacinPlacanjaId;
+        this.valuta_id = valuta_id;
+        this.seansa_id = seansa_id;
+        this.klijentId = klijentId;
+
+        //Valuta valuta = JDBCUtils.getValutaById(valuta_id);
+        //this.valuta = valuta.getNaziv();
+        if(this.seansa_id==null){
+            this.seansa_id = 1;
+        }
+    }
+
+
+    public String getNacinPlacanja() {
+        return nacinPlacanja;
+    }
+
+    public void setNacinPlacanja(String nacinPlacanja) {
+        this.nacinPlacanja = nacinPlacanja;
     }
 
     public String getValuta() {

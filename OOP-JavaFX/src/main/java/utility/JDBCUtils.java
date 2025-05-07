@@ -53,7 +53,24 @@ public class JDBCUtils {
         }
 
     }
-    public static ObservableList<Klijent> getKlijentiByPsihoterapeutId(Integer id){
+    public static int getKlijentIdByName(String ime, String prezime) {
+        String query = "select klijent_id from klijent where ime = ? and prezime = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, ime);
+            statement.setString(2, prezime);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("klijent_id");
+            } else {
+                throw new RuntimeException();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+            public static ObservableList<Klijent> getKlijentiByPsihoterapeutId(Integer id){
         ObservableList<Klijent> klijenti = FXCollections.observableArrayList();
       //  String query = "select * from klijent";
         String query = "select * from klijent where ?=psihoterapeut_id";
@@ -376,7 +393,67 @@ public class JDBCUtils {
         }
 
         return null;
-    } public static Integer dodajKlijenta(Klijent klijent){
+
+    }
+
+/*
+Columns:
+placanje_id int AI PK
+svrha varchar(50)
+rata int
+iznos double(6,3)
+nacin_placanja_id int
+valuta_id int
+seansa_id int
+klijent_id int
+ */
+
+/*
+    public static ObservableList<Placanje> dodajPlacanje(Placanje placanje) {
+        ObservableList<Placanje> lista = FXCollections.observableArrayList();
+
+        try {
+
+
+            query = "INSERT INTO placanje (svrha, rata, iznos, nacin_placanja_id, valuta_id, seansa_id, klijent_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, placanje.getSvrha());
+            statement.setInt(2, placanje.getRata());
+            statement.setDouble(3, placanje.getIznos());
+            statement.setInt(4, placanje.getNacinPlacanjaId());
+            statement.setInt(5, placanje.getValuta_id());
+
+            // Ako nema seanse, stavi NULL preko setNull
+            if (seansaId > 0) {
+                statement.setInt(6, seansaId);
+            } else {
+                statement.setNull(6, java.sql.Types.INTEGER);
+            }
+
+            statement.setInt(7, klijentId);
+
+            statement.executeUpdate();
+
+            // Dodaj novi zapis u listu
+            lista.add(new Placanje(
+                    placanje.getIme(),
+                    placanje.getPrezime(),
+                    placanje.getValuta(),           // Prikaz kao tekst, npr. "RSD"
+                    placanje.getNacinPlacanja(),    // Prikaz kao tekst, npr. "Gotovina"
+                    placanje.getSvrha(),
+                    placanje.getRata(),
+                    placanje.getIznos()
+            ));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+*/
+
+    public static Integer dodajKlijenta(Klijent klijent){
         String query = "insert into klijent (ime,prezime,datum_rodjenja,pol,email,telefon,prva_terapija,opis_problema,psihoterapeut_id) values (?, ?, ?,?,?,?,?,?,?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -638,8 +715,72 @@ public class JDBCUtils {
         }
 
     }
+    public static int getNacinPlacanjaIdByNaziv(String naziv) {
+        String query = "SELECT nacin_placanja_id FROM nacin_placanja WHERE naziv = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, naziv);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("nacin_placanja_id");
+            } else {
+                throw new RuntimeException("Način plaćanja nije pronađen: " + naziv);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Greška prilikom dohvata načina plaćanja: " + naziv, e);
+        }
+    }
 
 
+
+
+    public static ObservableList<Placanje> dodajPlacanje(Placanje placanje) {
+        String query = "INSERT INTO placanje (svrha, rata, iznos, nacin_placanja_id, valuta_id, seansa_id, klijent_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        ObservableList<Placanje> lista = FXCollections.observableArrayList();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, placanje.getSvrha());
+            statement.setInt(2, placanje.getRata());
+            statement.setDouble(3, placanje.getIznos());
+            statement.setInt(4, placanje.getNacinPlacanjaId());
+            statement.setInt(5, placanje.getValuta_id());
+            statement.setInt(6, placanje.getSeansa_id());
+            statement.setInt(7, placanje.getKlijentId());
+
+            statement.executeUpdate();
+
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                int novoId = rs.getInt(1);
+                lista.add(placanje);
+            }
+
+            return  lista;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ObservableList<Seansa> getNeplaceneSeanseByKlijentId(Integer klijentID) {
+        String query = "select s.* from seansa s join seansa_klijent sk on s.seansa_id=sk.seansa_id left join placanje p on p.seansa_id=s.seansa_id where sk.klijent_id=? and p.placanje_id is null ";
+        ObservableList<Seansa> lista = FXCollections.observableArrayList();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,klijentID);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                lista.add(getSeansaFromResultSet(rs));
+            }
+            return lista;
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
 
 

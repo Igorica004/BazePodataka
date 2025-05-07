@@ -16,6 +16,14 @@ public class Valuta {
         this.skracenica = skracenica;
     }
 
+    public Integer getValutaId() {
+        return valutaId;
+    }
+
+    public void setValutaId(Integer valutaId) {
+        this.valutaId = valutaId;
+    }
+
     public String getNaziv() {
         return naziv;
     }
@@ -34,6 +42,6 @@ public class Valuta {
 
     @Override
     public String toString() {
-        return naziv+" ("+skracenica+")";
+        return naziv;
     }
 }
