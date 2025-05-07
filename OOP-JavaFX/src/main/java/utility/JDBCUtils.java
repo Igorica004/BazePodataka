@@ -700,6 +700,59 @@ public class JDBCUtils {
         }
     }
 
+    private static Sertifikat getSertifikatFromResultSet(ResultSet rs){
+       try {
+            Integer sertifikat_id = rs.getInt("sertifikat_id");
+            Date datum = rs.getDate("datum");
+            Integer psihoterapeut_id = rs.getInt("psihoterapeut_id");
+            Integer oblast_psihoterapije_id = rs.getInt("oblast_psihoterapije_id");
+            return new Sertifikat(sertifikat_id,datum,psihoterapeut_id,oblast_psihoterapije_id);
+        } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
+
+    public static ObservableList<Sertifikat> getSertifikatiByPsihoterapeutId(int psihoterapeut_id){
+        ObservableList<Sertifikat> sertifikati = FXCollections.observableArrayList();
+        String query = "select * from sertifikat where psihoterapeut_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeut_id);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                sertifikati.add(getSertifikatFromResultSet(rs));
+            }
+            return sertifikati;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static OblastPsihoterapije getOblastPsihoterapijeFromResultSet(ResultSet rs){
+        try {
+            Integer oblast_psihoterapije_id = rs.getInt("oblast_psihoterapije_id");
+            String naziv = rs.getString("naziv");
+            return new OblastPsihoterapije(oblast_psihoterapije_id,naziv);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static OblastPsihoterapije getOblastPsihoterapijeById(int id){
+       String query = "select * from oblast_psihoterapije where oblast_psihoterapije_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getOblastPsihoterapijeFromResultSet(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 /*
     public static ObservableList<Termin> getTermini(Integer psihoterapeutId) {
         ObservableList<Termin> termini = FXCollections.observableArrayList();
