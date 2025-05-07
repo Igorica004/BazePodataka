@@ -1,4 +1,4 @@
-package view;
+package model;
 
 public class Fakultet {
     private Integer fakultet_id;

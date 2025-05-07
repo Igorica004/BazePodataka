@@ -78,8 +78,8 @@ public class TabPlacanja extends Tab {
         sadrzaj.setSpacing(10);
         sadrzaj.setPadding(new Insets(10));
 
-        cbValuta.setItems(JDBCUtils.sveValute());
-        cbNacinPlacanja.setItems(JDBCUtils.sviNaciniPlacanja());
+        cbValuta.setItems(JDBCUtils.getValute());
+        cbNacinPlacanja.setItems(JDBCUtils.getNaciniPlacanja());
 
         cbValuta.getSelectionModel().select(0);
         cbNacinPlacanja.getSelectionModel().select(0);

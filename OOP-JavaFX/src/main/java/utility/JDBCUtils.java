@@ -3,7 +3,7 @@ package utility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
-import view.Fakultet;
+import model.Fakultet;
 
 import java.sql.*;
 import java.util.Properties;
@@ -119,7 +119,7 @@ public class JDBCUtils {
       }
    }
 
-   public static Adresa getAdresaFromResultSet(ResultSet rs){
+   private static Adresa getAdresaFromResultSet(ResultSet rs){
 
        try {
            return new Adresa(rs.getInt("adresa_id"),rs.getString("opstina"),rs.getString("ulica"),rs.getString("broj"));
@@ -417,7 +417,7 @@ public class JDBCUtils {
 
        return null;
     }
-    public static Fakultet getFakultetFromResultSet(ResultSet rs){
+    private static Fakultet getFakultetFromResultSet(ResultSet rs){
         try {
             return new Fakultet(rs.getString("naziv"),rs.getInt("univerzitet_id"));
         } catch (SQLException e) {
@@ -477,21 +477,6 @@ public class JDBCUtils {
         }
     }
 
-    // Metoda koja vraća naziv valute na osnovu ID-a
-    private static String getValutaName(int valutaId) {
-        String valutaName = "";
-        String query = "SELECT naziv FROM valuta WHERE valuta_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, valutaId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                valutaName = rs.getString("naziv");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return valutaName;
-    }
 
     // Metoda koja vraća naziv načina plačanja na osnovu ID-a
     private static String getNacinPlacanjaName(int nacinPlacanjaId) {
@@ -523,11 +508,8 @@ public class JDBCUtils {
 
     }
 
-
     private static Placanje getPlacanjeFromResultSet(ResultSet rs) {
         try {
-
-
             // Uzmi podatke iz ResultSet-a
             int klijentId = rs.getInt("klijent_id");
             int valutaId = rs.getInt("valuta_id");
@@ -564,7 +546,7 @@ public class JDBCUtils {
         }
     }
 
-    public static ObservableList<Valuta> sveValute() {
+    public static ObservableList<Valuta> getValute() {
         ObservableList<Valuta> valute = FXCollections.observableArrayList();
         String query = "SELECT naziv,skraceno FROM valuta"; // Preporučujem da vratiš i ID, ne samo naziv
 
@@ -585,7 +567,7 @@ public class JDBCUtils {
         return valute;
     }
 
-    public static ObservableList<NacinPlacanja> sviNaciniPlacanja() {
+    public static ObservableList<NacinPlacanja> getNaciniPlacanja() {
 
         ObservableList<NacinPlacanja> naciniPlacanja = FXCollections.observableArrayList();
         String query = "SELECT naziv FROM nacin_placanja"; // Preporučujem da vratiš i ID, ne samo naziv
@@ -639,9 +621,84 @@ public class JDBCUtils {
 
     }
 
+    private static Seansa getSeansaFromResultSet(ResultSet rs){
+        try {
+            Integer seansa_id = rs.getInt("seansa_id");
+            Date dan = rs.getDate("dan");
+            Time vreme = rs.getTime("vreme");
+            Integer trajanje = rs.getInt("trajanje");
+            Integer cena_po_satu = rs.getInt("cena_po_satu");
+            Date datum_promene = rs.getDate("datum_promene_cene");
+            String beleske = rs.getString("beleske");
+            Integer psihoterapeut_id = rs.getInt("psihoterapeut_id");
+            return new Seansa(seansa_id,dan,vreme,trajanje,cena_po_satu,datum_promene,beleske ,psihoterapeut_id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static ObservableList<Seansa> getSeanseByPsihoterapeutId(Integer psihoterapeutId) {
+        ObservableList<Seansa> seanse = FXCollections.observableArrayList();
+        String query = "select * from seansa where psihoterapeut_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeutId);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                seanse.add(getSeansaFromResultSet(rs));
+            }
+            return seanse;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static ObservableList<Klijent> getKlijentiBySeansaId(Integer seansa_id){
+       ObservableList<Klijent> klijenti = FXCollections.observableArrayList();
+       String query = "select k.* from klijent k join klijent_seansa ks on k.klijent_id = ks.klijent_id where ks.seansa_id = ?";
+       try {
+           PreparedStatement statement = connection.prepareStatement(query);
+           statement.setInt(1,seansa_id);
+           ResultSet rs = statement.executeQuery();
+           while(rs.next()){
+               klijenti.add(getKlijentiFromResultSet(rs));
+           }
+           return klijenti;
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
 
+    private static PsiholoskiTest getPsiholoskiTestFromResultSet(ResultSet rs){
+        try {
+            Integer psiholoski_test_id = rs.getInt("psiholoski_test_id");
+            String naziv = rs.getString("naziv");
+            String oblast = rs.getString("oblast");
+            Integer cena = rs.getInt("cena");
+            Double rezultat = rs.getDouble("rezultat");
+            Integer seansa_id = rs.getInt("seansa_id");
+            Integer klijent_id = rs.getInt("klijent_id");
+            return new PsiholoskiTest(psiholoski_test_id,naziv,oblast,cena,rezultat,seansa_id,klijent_id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ObservableList<PsiholoskiTest> getPsiholoskiTestByPsihoterapeutId(int psihoterapeut_id){
+       ObservableList<PsiholoskiTest> psiholoskiTestovi = FXCollections.observableArrayList();
+       String query = "select * from psiholoski_test p join seansa s on p.seansa_id = s.seansa_id where s.psihoterapeut_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeut_id);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                psiholoskiTestovi.add(getPsiholoskiTestFromResultSet(rs));
+            }
+            return psiholoskiTestovi;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 /*
     public static ObservableList<Termin> getTermini(Integer psihoterapeutId) {

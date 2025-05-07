@@ -57,7 +57,7 @@ public class TabProfil extends Tab {
             Univerzitet univerzitet = JDBCUtils.getUniverzitetById(fakultet.getUniverzitet_id());
             sadrzaj.getChildren().add(new Label(String.format("Fakultet: %s, %s ",fakultet.getNaziv(),univerzitet.getNaziv())));
         }
-        else{
+        else if(fakulteti.size() > 1){
             sadrzaj.getChildren().add(new Label("Fakulteti: "));
             for(Fakultet fakultet: fakulteti){
                 Univerzitet univerzitet = JDBCUtils.getUniverzitetById(fakultet.getUniverzitet_id());
