@@ -29,9 +29,9 @@ public class ProzorGlavni extends VBox {
                 new TabKlijenti(psihoterapeutId),
                 new TabPlacanja(psihoterapeutId),
                 new TabProfil(psihoterapeutId),
-                new TabSeanse(),
+                new TabSeanse(psihoterapeutId),
                 new TabTermini(),
-                new TabPsiholoskiTest())
+                new TabPsiholoskiTest(psihoterapeutId))
             ;
 
         hb.getChildren().add(labelNaslov);

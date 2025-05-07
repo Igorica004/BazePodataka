@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import model.Klijent;
 import model.PsiholoskiTest;
+import utility.JDBCUtils;
 
 public class TabPsiholoskiTest extends Tab {
     TableView<PsiholoskiTest> tv = new TableView<>();
@@ -24,13 +25,13 @@ public class TabPsiholoskiTest extends Tab {
     TableColumn<PsiholoskiTest, Boolean> colPrezime = new TableColumn<>("Prezime");
     Label opis = new Label("");
 
-    public TabPsiholoskiTest(){
+    public TabPsiholoskiTest(int psihoterapeut_id){
         tv.getColumns().addAll(colKlijentID, colIme, colPrezime, colPsiholoskiTestID,
                 colNaziv, colOblast, colCena, colRezultat);
-        colKlijentID.setCellValueFactory(new PropertyValueFactory<>("klijentID"));
+        colKlijentID.setCellValueFactory(new PropertyValueFactory<>("klijent_id"));
         colIme.setCellValueFactory(new PropertyValueFactory<>("ime"));
         colPrezime.setCellValueFactory(new PropertyValueFactory<>("prezime"));
-        colPsiholoskiTestID.setCellValueFactory(new PropertyValueFactory<>("psiholoskiTestID"));
+        colPsiholoskiTestID.setCellValueFactory(new PropertyValueFactory<>("psiholoski_test_id"));
         colNaziv.setCellValueFactory(new PropertyValueFactory<>("naziv"));
         colOblast.setCellValueFactory(new PropertyValueFactory<>("oblast"));
         colCena.setCellValueFactory(new PropertyValueFactory<>("cena"));
@@ -38,6 +39,7 @@ public class TabPsiholoskiTest extends Tab {
 
         tv.setMinWidth(790);
         tv.setMaxHeight(250);
+        tv.setItems(JDBCUtils.getPsiholoskiTestByPsihoterapeutId(psihoterapeut_id));
 
         HBox hb = new HBox();
         hb.getChildren().add(tv);

@@ -57,11 +57,23 @@ public class TabProfil extends Tab {
             Univerzitet univerzitet = JDBCUtils.getUniverzitetById(fakultet.getUniverzitet_id());
             sadrzaj.getChildren().add(new Label(String.format("Fakultet: %s, %s ",fakultet.getNaziv(),univerzitet.getNaziv())));
         }
-        else{
+        else if(fakulteti.size() > 1){
             sadrzaj.getChildren().add(new Label("Fakulteti: "));
             for(Fakultet fakultet: fakulteti){
                 Univerzitet univerzitet = JDBCUtils.getUniverzitetById(fakultet.getUniverzitet_id());
                 sadrzaj.getChildren().add(new Label(String.format("%s, %s ",fakultet.getNaziv(),univerzitet.getNaziv())));
+            }
+        }
+
+        ObservableList<Sertifikat> sertifikati = JDBCUtils.getSertifikatiByPsihoterapeutId(psihoterapeut_id);
+        if(sertifikati.size() == 1){
+            Sertifikat sertifikat = sertifikati.get(0);
+            sadrzaj.getChildren().add(new Label("Sertifikat: "+sertifikat));
+        }
+        else if(sertifikati.size() > 1){
+            sadrzaj.getChildren().add(new Label("Sertifikati: "));
+            for(Sertifikat sertifikat: sertifikati){
+                sadrzaj.getChildren().add(new Label(sertifikat.toString()));
             }
         }
         
