@@ -50,4 +50,9 @@ public class Adresa {
     public void setBroj(String broj) {
         this.broj = broj;
     }
+
+    @Override
+    public String toString() {
+        return ulica+" "+broj+", "+opsitna;
+    }
 }

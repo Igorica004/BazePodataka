@@ -31,6 +31,7 @@ public class ProzorGlavni extends VBox {
                 new TabProfil(psihoterapeutId),
                 new TabSeanse(psihoterapeutId),
                 new TabTermini(psihoterapeutId),
+                new TabPregledPsihoterapeuta(psihoterapeutId),
                 new TabPsiholoskiTest(psihoterapeutId))
             ;
 
