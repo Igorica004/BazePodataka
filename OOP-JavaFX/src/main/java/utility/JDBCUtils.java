@@ -767,6 +767,31 @@ public class JDBCUtils {
         }
     }
 
+    private static NacinPlacanja getNacinPlacanjaFromResultSet(ResultSet rs){
+       try {
+            Integer nacinPlacanjaId = rs.getInt("nacin_placanja_id");
+            String naziv = rs.getString("naziv");
+            return new NacinPlacanja(nacinPlacanjaId,naziv);
+        } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
+
+    public static NacinPlacanja getNacinPlacanjaById(Integer nacinPlacanjaId){
+       String query = "select * from nacin_placanja where nacin_placanja_id=?";
+       try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,nacinPlacanjaId);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getNacinPlacanjaFromResultSet(rs);
+            }
+            return  null;
+        } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+    }
+
     public static ObservableList<Seansa> getSeanseByPsihoterapeutId(Integer psihoterapeutId) {
         ObservableList<Seansa> seanse = FXCollections.observableArrayList();
         String query = "select * from seansa where psihoterapeut_id=?";

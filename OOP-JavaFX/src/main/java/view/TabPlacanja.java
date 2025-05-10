@@ -19,13 +19,13 @@ public class TabPlacanja extends Tab {
         TableColumn<Placanje, String> colIme = new TableColumn<>("Ime");
         TableColumn<Placanje, String> colPrezime = new TableColumn<>("Prezime");
         TableColumn<Placanje, String> colValuta = new TableColumn<>("Valuta");
-        TableColumn<Placanje, String> colNacinPlacanjaId = new TableColumn<>("Nacin placanja");
+        TableColumn<Placanje, String> colNacinPlacanja = new TableColumn<>("Nacin placanja");
         TableColumn<Placanje, String> colSvrha = new TableColumn<>("Svrha");
         TableColumn<Placanje, Integer> colRata = new TableColumn<>("Rata");
         TableColumn<Placanje, String> colIznos = new TableColumn<>("Iznos");
         tv.setMinWidth(790);
         tv.setMaxHeight(250);
-        tv.getColumns().addAll(colIme, colPrezime, colValuta, colSvrha, colNacinPlacanjaId, colRata, colIznos);
+        tv.getColumns().addAll(colIme, colPrezime, colValuta, colSvrha, colNacinPlacanja, colRata, colIznos);
         colKlijentId.setCellValueFactory(new PropertyValueFactory<>("klijentId"));
 
         colIme.setCellValueFactory(new PropertyValueFactory<>("ime"));
@@ -33,7 +33,7 @@ public class TabPlacanja extends Tab {
 
 
         colValuta.setCellValueFactory(new PropertyValueFactory<>("valuta"));  // Promeni naziv sa "valutaId" na "valuta"
-        colNacinPlacanjaId.setCellValueFactory(new PropertyValueFactory<>("nacinPlacanjaId"));
+        colNacinPlacanja.setCellValueFactory(new PropertyValueFactory<>("nacinPlacanja"));
         colSvrha.setCellValueFactory(new PropertyValueFactory<>("svrha"));
         colRata.setCellValueFactory(new PropertyValueFactory<>("rata"));
         colIznos.setCellValueFactory(new PropertyValueFactory<>("iznos"));

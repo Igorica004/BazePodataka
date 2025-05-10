@@ -44,6 +44,8 @@ public class Psihoterapeut {
         TipPsihoterapeuta tipPsihoterapeuta = JDBCUtils.getTipPsihoterapeutaById(tip_psihoterapeuta_id);
         tip = tipPsihoterapeuta.toString();
         Psihoterapeut p = JDBCUtils.getPsihoterapeutById(supervizor_id);
+        if(p == null)
+            return;
         supervizor = p.getIme() + " " + p.getPrezime();
         NivoObrazovanja nivoObrazovanja = JDBCUtils.getNivoObrazovanjaById(nivo_obrazovanja_id);
         nivo = nivoObrazovanja.toString();

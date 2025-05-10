@@ -48,6 +48,8 @@ klijent_id int
         if(this.seansa_id==null){
             this.seansa_id = 0;
         }
+        NacinPlacanja np = JDBCUtils.getNacinPlacanjaById(nacinPlacanjaId);
+        nacinPlacanja = np.getNaziv();
     }
 /*
 Columns:
