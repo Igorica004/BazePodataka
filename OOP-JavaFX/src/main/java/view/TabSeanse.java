@@ -21,20 +21,18 @@ public class TabSeanse extends Tab {
     TableColumn<Seansa, String> colDan = new TableColumn<>("Dan");
     TableColumn<Seansa, Integer> colVreme = new TableColumn<>("Vreme");
     TableColumn<Seansa, Integer> colTrajanje = new TableColumn<>("Trajanje");
-    TableColumn<Seansa, Integer> colCenaPoSatu = new TableColumn<>("Cena po satu");
-    TableColumn<Seansa, LocalDate> colDatumCene = new TableColumn<>("Datum cene");
+    TableColumn<Seansa, String> colCenaPoSatu = new TableColumn<>("Cena po satu");
     TableColumn<Seansa, String> colUcesnici = new TableColumn<>("Učesnici");
     TableColumn<Seansa, String> colBeleske = new TableColumn<>("Beleške");
 
     public TabSeanse(int psihoterapeut_id) {
 
-        tv.getColumns().addAll(colSeansaID, colDan, colVreme, colTrajanje, colCenaPoSatu, colDatumCene, colUcesnici, colBeleske);
+        tv.getColumns().addAll(colSeansaID, colDan, colVreme, colTrajanje, colCenaPoSatu, colUcesnici, colBeleske);
         colSeansaID.setCellValueFactory(new PropertyValueFactory<>("seansa_id"));
         colDan.setCellValueFactory(new PropertyValueFactory<>("dan"));
         colVreme.setCellValueFactory(new PropertyValueFactory<>("vreme"));
         colTrajanje.setCellValueFactory(new PropertyValueFactory<>("trajanje"));
-        colCenaPoSatu.setCellValueFactory(new PropertyValueFactory<>("cena_po_satu"));
-        colDatumCene.setCellValueFactory(new PropertyValueFactory<>("datum_promene_cene"));
+        colCenaPoSatu.setCellValueFactory(new PropertyValueFactory<>("cena"));
         colUcesnici.setCellValueFactory(new PropertyValueFactory<>("ucesnici"));
         colBeleske.setCellValueFactory(new PropertyValueFactory<>("beleske"));
 

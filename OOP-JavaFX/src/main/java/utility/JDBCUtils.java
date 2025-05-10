@@ -713,11 +713,37 @@ public class JDBCUtils {
             Date dan = rs.getDate("dan");
             Time vreme = rs.getTime("vreme");
             Integer trajanje = rs.getInt("trajanje");
-            Integer cena_po_satu = rs.getInt("cena_po_satu");
-            Date datum_promene = rs.getDate("datum_promene_cene");
+            Integer cena_id = rs.getInt("cena_id");
             String beleske = rs.getString("beleske");
             Integer psihoterapeut_id = rs.getInt("psihoterapeut_id");
-            return new Seansa(seansa_id,dan,vreme,trajanje,cena_po_satu,datum_promene,beleske ,psihoterapeut_id);
+            return new Seansa(seansa_id,dan,vreme,trajanje,cena_id,beleske ,psihoterapeut_id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Cena getCenaFromResultSet(ResultSet rs){
+        try {
+            Integer cena_id = rs.getInt("cena_id");
+            Integer valuta_id = rs.getInt("valuta_id");
+            Double iznos = rs.getDouble("iznos");
+            Date datum_izmene = rs.getDate("datum_izmene");
+            return new Cena(cena_id,iznos,datum_izmene,valuta_id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Cena getCenaById(Integer cenaId){
+       String query = "select * from cena where cena_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,cenaId);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getCenaFromResultSet(rs);
+            }
+            return  null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -760,11 +786,11 @@ public class JDBCUtils {
             Integer psiholoski_test_id = rs.getInt("psiholoski_test_id");
             String naziv = rs.getString("naziv");
             String oblast = rs.getString("oblast");
-            Integer cena = rs.getInt("cena");
+            Integer cena_id = rs.getInt("cena_id");
             Double rezultat = rs.getDouble("rezultat");
             Integer seansa_id = rs.getInt("seansa_id");
             Integer klijent_id = rs.getInt("klijent_id");
-            return new PsiholoskiTest(psiholoski_test_id,naziv,oblast,cena,rezultat,seansa_id,klijent_id);
+            return new PsiholoskiTest(psiholoski_test_id,naziv,oblast,cena_id,rezultat,seansa_id,klijent_id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
