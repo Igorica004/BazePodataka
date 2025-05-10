@@ -31,6 +31,7 @@ public class Seansa {
         this.cena = String.format("%s %s",cena.getIznos(),valuta.getSkracenica());
         ucesnici = "";
         ObservableList<Klijent> klijenti = JDBCUtils.getKlijentiBySeansaId(seansa_id);
+        if(klijenti.size() == 0) return;
         for(int i=0; i<klijenti.size()-1; i++){
             ucesnici += klijenti.get(i).getIme() + " " + klijenti.get(i).getPrezime() + ", ";
         }
