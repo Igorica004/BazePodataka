@@ -121,7 +121,25 @@ public class JDBCUtils {
            throw new RuntimeException(e);
        }
    }
-   public static Psihoterapeut getPsihoterapeutById(int id){
+
+
+    public static ObservableList<Psihoterapeut> getPsihoterapeuti() {
+        ObservableList<Psihoterapeut> sviPsihoterapeuti = FXCollections.observableArrayList();
+        String query = "select * from psihoterapeut";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();
+
+            while(rs.next()){
+                sviPsihoterapeuti.add(getPsihoterapeutFromResultSet(rs));
+            }
+            return sviPsihoterapeuti;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Psihoterapeut getPsihoterapeutById(int id){
       String query = "select * from psihoterapeut where ?=psihoterapeut_id";
       try {
          PreparedStatement statement = connection.prepareStatement(query);
@@ -840,7 +858,7 @@ public class JDBCUtils {
     }
 
     public static ObservableList<Seansa> getNeplaceneSeanseByKlijentId(Integer klijentID) {
-    //todo: sta ako su rate?
+
         String query = "select s.* from seansa s join klijent_seansa ks on s.seansa_id = ks.seansa_id left join placanje p on s.seansa_id = p.seansa_id where ks.klijent_id=? and p.placanje_id is null";
 
         try {
@@ -909,42 +927,6 @@ klijent_id int
 
 
 
-/*
-    public static ObservableList<Termin> getTermini(Integer psihoterapeutId) {
-        ObservableList<Termin> termini = FXCollections.observableArrayList();
-        String query = """
-        SELECT t.termin_id, t.datum, t.vreme, s.klijent_id
-        FROM termin t
-        LEFT JOIN seansa s ON t.termin_id = s.seansa_id
-        WHERE t.psihoterapeut_id = ?
-    """;
-
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, psihoterapeutId);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                Integer klijentId = rs.getInt("klijent_id");
-               String ime = getKlijentIme(klijentId);  // Poziv metode za ime
-               String prezime = getKlijentPrezime(klijentId);  // Poziv metode za prezime
-
-                Termin termin = new Termin(
-                        rs.getInt("termin_id"),
-                        klijentId,
-                        rs.getDate("datum"),
-                        rs.getTime("vreme").toLocalTime().getHour() * 100 + rs.getTime("vreme").toLocalTime().getMinute(),
-                        ime,
-                        prezime
-                );
-                termini.add(termin);
-            }
-            return termini;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-*/
 
 
 }

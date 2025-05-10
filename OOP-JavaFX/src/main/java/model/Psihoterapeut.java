@@ -1,5 +1,7 @@
 package model;
 
+import utility.JDBCUtils;
+
 import java.sql.Date;
 
 public class Psihoterapeut {
@@ -14,6 +16,12 @@ public class Psihoterapeut {
     private Integer tip_psihoterapeuta_id;
     private Integer nivo_obrazovanja_id;
     private Integer supervizor_id;
+
+
+    private String adresa;
+    private String tip;
+    private String supervizor;
+    private String nivo;
 
 
     public Psihoterapeut(int psihoterapeut_id, String ime, String prezime, Long JMBG, Date datum_rodjenja,
@@ -31,6 +39,14 @@ public class Psihoterapeut {
         this.supervizor_id = supervizor_id;
 
         this.ime = ime;
+        Adresa adresa1 = JDBCUtils.getAdresaById(adresa_id);
+        adresa = adresa1.toString();
+        TipPsihoterapeuta tipPsihoterapeuta = JDBCUtils.getTipPsihoterapeutaById(tip_psihoterapeuta_id);
+        tip = tipPsihoterapeuta.toString();
+        Psihoterapeut p = JDBCUtils.getPsihoterapeutById(supervizor_id);
+        supervizor = p.getIme() + " " + p.getPrezime();
+        NivoObrazovanja nivoObrazovanja = JDBCUtils.getNivoObrazovanjaById(nivo_obrazovanja_id);
+        nivo = nivoObrazovanja.toString();
     }
 
     public Psihoterapeut(String ime, String prezime, Long JMBG, Date datum_rodjenja, String telefon,
@@ -46,6 +62,22 @@ public class Psihoterapeut {
         this.tip_psihoterapeuta_id = tip_psihoterapeuta_id;
         this.nivo_obrazovanja_id = nivo_obrazovanja_id;
         this.supervizor_id = supervizor_id;
+    }
+
+    public String getAdresa() {
+        return adresa;
+    }
+
+    public String getTip() {
+        return tip;
+    }
+
+    public String getSupervizor() {
+        return supervizor;
+    }
+
+    public String getNivo() {
+        return nivo;
     }
 
     public String getIme() {

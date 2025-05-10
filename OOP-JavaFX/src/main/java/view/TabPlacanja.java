@@ -38,61 +38,17 @@ public class TabPlacanja extends Tab {
         colRata.setCellValueFactory(new PropertyValueFactory<>("rata"));
         colIznos.setCellValueFactory(new PropertyValueFactory<>("iznos"));
 
-        GridPane gp = new GridPane();
-        Label lbIme = new Label("Ime");
-        TextField tfIme = new TextField();
-        Label lbPrezime = new Label("Prezime");
-        TextField tfPrezima = new TextField();
-        Label lbValuta = new Label("Valuta");
-        ComboBox<Valuta> cbValuta = new ComboBox<>();
-        Label lbNacinPlacanja = new Label("Nacin placanja");
-        ComboBox<NacinPlacanja> cbNacinPlacanja = new ComboBox<>();
-        Label lbSvrha = new Label("Svrha");
-        TextField tfSvrha = new TextField();
-        Label lbRata = new Label("Rata");
-        TextField tfRata = new TextField();
-        Label lbIznos = new Label("Iznos");
-        TextField tfIznos = new TextField();
+
        ComboBox<Klijent> cbKlijenti = new ComboBox<>();
         cbKlijenti.setItems(JDBCUtils.getKlijentiByPsihoterapeutId(psihoterapeutId));
         cbKlijenti.getSelectionModel().select(0);
-        Label l;
-        gp.add( l = new Label("Klijent"), 0, 0);
-        gp.add(cbKlijenti, 1, 0);
-        gp.add(lbValuta, 0, 2);
-        gp.add(cbValuta, 1, 2);
-        gp.add(lbNacinPlacanja, 0, 3);
-        gp.add(cbNacinPlacanja, 1, 3);
-        gp.add(lbSvrha, 0, 4);
-        gp.add(tfSvrha, 1, 4);
-        gp.add(lbRata, 0, 5);
-        gp.add(tfRata, 1, 5);
-        gp.add(lbIznos, 0, 6);
-        gp.add(tfIznos, 1, 6);
-        Button btnNovoPlacanje = new Button("Dodaj novo placanje");
-        ComboBox<Seansa> cbSeansa = new ComboBox<>();
-        gp.add(l = new Label("Seansa"), 0, 7);
-        gp.add(cbSeansa, 1, 7);
-        gp.add(btnNovoPlacanje, 0, 8);
-     //   cbSeansa.setItems(JDBCUtils.getNeplaceneSeanseByKlijentId(cbKlijenti.getSelectionModel().getSelectedItem().getKlijentID()));
-/*
-       cbKlijenti.setOnAction((action) -> {
-           cbSeansa.setItems(JDBCUtils.getNeplaceneSeanseByKlijentId(cbKlijenti.getSelectionModel().getSelectedItem().getKlijentID()));
-       });
 
-        gp.setHgap(10);
-        gp.setVgap(10);
 
- */
         sadrzaj.getChildren().addAll(tv);
         sadrzaj.setSpacing(10);
         sadrzaj.setPadding(new Insets(10));
 
-       // cbValuta.setItems(JDBCUtils.getValute());
-    //    cbNacinPlacanja.setItems(JDBCUtils.getNaciniPlacanja());
 
-     //   cbValuta.getSelectionModel().select(0);
-     //   cbNacinPlacanja.getSelectionModel().select(0);
         tv.setItems(JDBCUtils.getPlacanjaByPsihoterapeutId(psihoterapeutId));  // Popunjava TableView sa placanjem
 
 
