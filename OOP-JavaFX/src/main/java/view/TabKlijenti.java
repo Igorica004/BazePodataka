@@ -142,9 +142,6 @@ public class TabKlijenti extends Tab {
 
             Klijent klijent = new Klijent(ime,prezime,datum,pol,email,telefon,opis,prva,psihoterapeutId);
            Integer noviId = JDBCUtils.dodajKlijenta(klijent);
-
-
-
             tv.setItems(JDBCUtils.getKlijentiByPsihoterapeutId(psihoterapeutId));
 
 

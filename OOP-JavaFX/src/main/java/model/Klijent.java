@@ -128,8 +128,11 @@ public class Klijent {
         this.prvaTerapija = prvaTerapija;
     }
 
+
     @Override
     public String toString() {
         return ime+" "+prezime;
     }
+
+
 }

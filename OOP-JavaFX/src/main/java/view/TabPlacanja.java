@@ -74,47 +74,28 @@ public class TabPlacanja extends Tab {
         gp.add(l = new Label("Seansa"), 0, 7);
         gp.add(cbSeansa, 1, 7);
         gp.add(btnNovoPlacanje, 0, 8);
-
+     //   cbSeansa.setItems(JDBCUtils.getNeplaceneSeanseByKlijentId(cbKlijenti.getSelectionModel().getSelectedItem().getKlijentID()));
+/*
        cbKlijenti.setOnAction((action) -> {
            cbSeansa.setItems(JDBCUtils.getNeplaceneSeanseByKlijentId(cbKlijenti.getSelectionModel().getSelectedItem().getKlijentID()));
        });
 
         gp.setHgap(10);
         gp.setVgap(10);
-        sadrzaj.getChildren().addAll(tv, gp);
+
+ */
+        sadrzaj.getChildren().addAll(tv);
         sadrzaj.setSpacing(10);
         sadrzaj.setPadding(new Insets(10));
 
-        cbValuta.setItems(JDBCUtils.getValute());
-        cbNacinPlacanja.setItems(JDBCUtils.getNaciniPlacanja());
+       // cbValuta.setItems(JDBCUtils.getValute());
+    //    cbNacinPlacanja.setItems(JDBCUtils.getNaciniPlacanja());
 
-        cbValuta.getSelectionModel().select(0);
-        cbNacinPlacanja.getSelectionModel().select(0);
+     //   cbValuta.getSelectionModel().select(0);
+     //   cbNacinPlacanja.getSelectionModel().select(0);
         tv.setItems(JDBCUtils.getPlacanjaByPsihoterapeutId(psihoterapeutId));  // Popunjava TableView sa placanjem
 
-        btnNovoPlacanje.setOnAction((action) -> {
-            Klijent k = cbKlijenti.getSelectionModel().getSelectedItem();
-            Valuta valuta = cbValuta.getSelectionModel().getSelectedItem();
-            NacinPlacanja nacinPlacanja = cbNacinPlacanja.getSelectionModel().getSelectedItem();
-            String svrha = tfSvrha.getText();
-            int rata = Integer.parseInt(tfRata.getText());
-            double iznos = Double.parseDouble(tfIznos.getText());
-            int seansaId = 1;
 
-/*
-Columns:
-placanje_id int AI PK
-svrha varchar(50)
-rata int
-iznos double(6,3)
-nacin_placanja_id int
-valuta_id int
-seansa_id int
-klijent_id int
- */
-           Placanje placanje = new Placanje(svrha,rata,iznos,nacinPlacanja.getNacinPlacanjaId(),valuta.getValutaId(),seansaId,k.getKlijentID());
-           tv.setItems(JDBCUtils.dodajPlacanje(placanje));
-        });
 
     }
 

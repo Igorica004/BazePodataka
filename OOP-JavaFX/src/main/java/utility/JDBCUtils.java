@@ -23,7 +23,7 @@ public class JDBCUtils {
    }
 
    public static int login(String username, String password){
-      String query = "select psihoterapeut_id from nalog where ?=username and ?=password";
+      String query = "select psihoterapeut_id from nalog where username=? and password=?";
        try {
            PreparedStatement statement = connection.prepareStatement(query);
            statement.setString(1,username);
@@ -53,6 +53,23 @@ public class JDBCUtils {
         }
 
     }
+    public static ObservableList<Termin> getTerminiByPsihoterapeut(int psihoterapeutId) {
+        ObservableList<Termin> termini = FXCollections.observableArrayList();
+
+        String query = "select * from termin where psihoterapeut_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeutId);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                termini.add(getTerminiFromResultset(rs));
+            }
+            return termini;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static ObservableList<Klijent> getKlijentiByPsihoterapeutId(Integer id){
         ObservableList<Klijent> klijenti = FXCollections.observableArrayList();
       //  String query = "select * from klijent";
@@ -194,6 +211,18 @@ public class JDBCUtils {
            throw new RuntimeException(e);
        }
    }
+
+    private static Termin getTerminiFromResultset(ResultSet rs){
+        try {
+           Date datum = rs.getDate("datum");
+           Time vreme = rs.getTime("vreme");
+           Integer psihoterapeut_id = rs.getInt("psihoterapeut_id");
+           Integer seansa_id = rs.getInt("seansa_id");
+            return new Termin(psihoterapeut_id,seansa_id,datum,vreme);
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
     private static Klijent getKlijentiFromResultSet(ResultSet rs){
         try {
             Integer klijent_id = rs.getInt("klijent_id");
@@ -376,7 +405,33 @@ public class JDBCUtils {
         }
 
         return null;
-    } public static Integer dodajKlijenta(Klijent klijent){
+    }
+    public static Integer dodajTermin(Termin termin) {
+        String query = "INSERT INTO termin (datum, vreme, psihoterapeut_id, seansa_id) VALUES (?, ?, ?, ?)";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.setDate(1, termin.getDatum());
+            statement.setTime(2, termin.getVreme());
+            statement.setInt(3, termin.getPsihoterapeutID());
+            statement.setInt(4, termin.getSeansaID());
+            statement.executeUpdate();
+
+            // Ovde dobijamo auto-generisani ID
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+
+    public static Integer dodajKlijenta(Klijent klijent){
         String query = "insert into klijent (ime,prezime,datum_rodjenja,pol,email,telefon,prva_terapija,opis_problema,psihoterapeut_id) values (?, ?, ?,?,?,?,?,?,?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
@@ -407,10 +462,6 @@ public class JDBCUtils {
                 return rs.getInt("klijent_id");
             else
                 return null;
-
-
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -532,13 +583,13 @@ public class JDBCUtils {
 
     public static ObservableList<Placanje> getPlacanjaByPsihoterapeutId(Integer psihoterapeutId) {
         ObservableList<Placanje> placanja = FXCollections.observableArrayList();
-        String query = "select * from placanje join klijent on placanje.klijent_id=klijent.klijent_id where klijent.psihoterapeut_id=?";
+        String query = "select * from placanje p join seansa s on p.seansa_id = s.seansa_id where s.psihoterapeut_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, psihoterapeutId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                placanja.add(getPlacanjeFromResultSet(rs));  // Dodaj rezultat u listu
+                placanja.add(getPlacanjeFromResultSet(rs));
             }
             return placanja;
         } catch (SQLException e) {
@@ -604,6 +655,41 @@ public class JDBCUtils {
         }
 
     }
+
+
+    public static Klijent getKlijentBySeansaId(int seansaId) {
+        String query = "SELECT *" +
+                "FROM klijent k\n" +
+                "JOIN klijent_seansa ks ON ks.klijent_id = k.klijent_id\n" +
+                "WHERE ks.seansa_id = ?;\n";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, seansaId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                int klijentId = rs.getInt("klijent_id");
+                String ime = rs.getString("ime");
+                String prezime = rs.getString("prezime");
+                Date datumRodjenja = rs.getDate("datum_rodjenja");
+                String pol = rs.getString("pol");
+                String email = rs.getString("email");
+                String telefon = rs.getString("telefon");
+                String opisProblema = rs.getString("opis_problema");
+                int prvaTerapija = rs.getInt("prva_terapija");
+                int psihoterapeutId = rs.getInt("psihoterapeut_id");
+
+                return new Klijent(ime, prezime, datumRodjenja, pol,
+                        email, telefon, opisProblema, prvaTerapija, psihoterapeutId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
     public static Valuta getValutaById(Integer valutaId) {
         String query = "select * from valuta where valuta_id=?";
@@ -753,6 +839,72 @@ public class JDBCUtils {
         }
     }
 
+    public static ObservableList<Seansa> getNeplaceneSeanseByKlijentId(Integer klijentID) {
+    //todo: sta ako su rate?
+        String query = "select s.* from seansa s join klijent_seansa ks on s.seansa_id = ks.seansa_id left join placanje p on s.seansa_id = p.seansa_id where ks.klijent_id=? and p.placanje_id is null";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,klijentID);
+            ResultSet rs = statement.executeQuery();
+            ObservableList<Seansa> seanse = FXCollections.observableArrayList();
+            while(rs.next()){
+                seanse.add(getSeansaFromResultSet(rs));
+            }
+            return seanse;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+    /*
+    placanje_id int AI PK
+svrha varchar(50)
+rata int
+iznos double(6,3)
+nacin_placanja_id int
+valuta_id int
+seansa_id int
+klijent_id int
+     */
+
+    public static Integer dodajPlacanje(Placanje placanje) {
+       String query = "insert into placanje (svrha,rata,iznos,nacin_placanja_id,valuta_id,seansa_id,klijent_id) values (?,?,?,?,?,?,?)";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,placanje.getSvrha());
+            statement.setInt(2,placanje.getRata());
+            statement.setDouble(3,placanje.getIznos());
+            statement.setInt(4,placanje.getNacinPlacanjaId());
+            statement.setInt(5, placanje.getValuta_id());
+            statement.setInt(6, placanje.getSeansa_id());
+            statement.setInt(7, placanje.getKlijentId());
+
+            statement.executeUpdate();
+            query = "select * from placanje where svrha=? and rata=? and iznos=? and nacin_placanja_id=? and valuta_id=? and seansa_id=? and klijent_id=?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1,placanje.getSvrha());
+            statement.setInt(2,placanje.getRata());
+            statement.setDouble(3,placanje.getIznos());
+            statement.setInt(4,placanje.getNacinPlacanjaId());
+            statement.setInt(5, placanje.getValuta_id());
+            statement.setInt(6, placanje.getSeansa_id());
+            statement.setInt(7, placanje.getKlijentId());
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return rs.getInt("placanje_id");
+            }
+            return null;
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
 
 
