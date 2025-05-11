@@ -23,11 +23,12 @@ public class TabPsiholoskiTest extends Tab {
     TableColumn<PsiholoskiTest, String> colKlijentID = new TableColumn<>("Klijent ID");
     TableColumn<PsiholoskiTest, String> colIme = new TableColumn<>("Ime");
     TableColumn<PsiholoskiTest, Boolean> colPrezime = new TableColumn<>("Prezime");
+    TableColumn<PsiholoskiTest, String> colSeansa = new TableColumn<>("Seansa");
     Label opis = new Label("");
 
     public TabPsiholoskiTest(int psihoterapeut_id){
         tv.getColumns().addAll(colKlijentID, colIme, colPrezime, colPsiholoskiTestID,
-                colNaziv, colOblast, colCena, colRezultat);
+                colNaziv, colOblast, colCena, colRezultat, colSeansa);
         colKlijentID.setCellValueFactory(new PropertyValueFactory<>("klijent_id"));
         colIme.setCellValueFactory(new PropertyValueFactory<>("ime"));
         colPrezime.setCellValueFactory(new PropertyValueFactory<>("prezime"));
@@ -36,6 +37,7 @@ public class TabPsiholoskiTest extends Tab {
         colOblast.setCellValueFactory(new PropertyValueFactory<>("oblast"));
         colCena.setCellValueFactory(new PropertyValueFactory<>("cena"));
         colRezultat.setCellValueFactory(new PropertyValueFactory<>("rezultat"));
+        colSeansa.setCellValueFactory(new PropertyValueFactory<>("seansa"));
 
         tv.setMinWidth(790);
         tv.setMaxHeight(250);

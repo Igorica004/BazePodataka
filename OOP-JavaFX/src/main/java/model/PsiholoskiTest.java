@@ -13,6 +13,7 @@ public class PsiholoskiTest {
     private String ime;
     private String prezime;
     private String cena;
+    private String seansa;
 
     public PsiholoskiTest(int psiholoski_test_id, String naziv, String oblast, int cena_id, Double rezultat, int seansa_id, int klijent_id) {
         this.psiholoski_test_id = psiholoski_test_id;
@@ -30,6 +31,9 @@ public class PsiholoskiTest {
         Klijent klijent = JDBCUtils.getKlijentById(klijent_id);
         ime = klijent.getIme();
         prezime = klijent.getPrezime();
+
+        Seansa s = JDBCUtils.getSeansaById(seansa_id);
+        seansa = String.format("%s %s",s.getDan(),s.getVreme().toString());
     }
 
     public void setIme(String ime) {
@@ -111,4 +115,13 @@ public class PsiholoskiTest {
     public String getPrezime() {
         return prezime;
     }
+
+    public String getSeansa() {
+        return seansa;
+    }
+    public void setSeansa(String seansa) {
+        this.seansa = seansa;
+    }
+
+
 }

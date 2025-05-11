@@ -1,5 +1,6 @@
 package view;
 
+import app.App;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -25,6 +26,7 @@ public class ProzorGlavni extends VBox {
             return;
         }
         TabPane tabbedPane = new TabPane();
+        App.tabObjavljivanja = new TabObjavljivanja(psihoterapeutId);
         tabbedPane.getTabs().addAll(
                 new TabKlijenti(psihoterapeutId),
                 new TabPlacanja(psihoterapeutId),
@@ -32,7 +34,8 @@ public class ProzorGlavni extends VBox {
                 new TabSeanse(psihoterapeutId),
                 new TabTermini(psihoterapeutId),
                 new TabPregledPsihoterapeuta(psihoterapeutId),
-                new TabPsiholoskiTest(psihoterapeutId))
+                new TabPsiholoskiTest(psihoterapeutId),
+                App.tabObjavljivanja)
             ;
 
         hb.getChildren().add(labelNaslov);

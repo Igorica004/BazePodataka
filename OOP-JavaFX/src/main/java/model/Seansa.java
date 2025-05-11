@@ -117,4 +117,6 @@ public class Seansa {
     public void setBeleske(String beleske) {
         this.beleske = beleske;
     }
+
+
 }

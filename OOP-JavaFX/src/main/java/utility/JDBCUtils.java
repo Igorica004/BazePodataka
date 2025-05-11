@@ -2,6 +2,7 @@ package utility;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TextField;
 import model.*;
 import model.Fakultet;
 
@@ -975,9 +976,74 @@ klijent_id int
 
     }
 
+    public static boolean daLiJeSeansaObjavljena(Integer seansa_id, String primalac){
+        String query = "select s.* from objavljivanje o join seansa s on o.seansa_id = s.seansa_id where o.tip_objavljivanja=? and s.seansa_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,primalac);
+            statement.setInt(2,seansa_id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static void objaviSeansu(Integer seansa_id, String primalac) {
+        String query = "insert into objavljivanje (seansa_id,tip_objavljivanja) values (?,?)";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,seansa_id);
+            statement.setString(2,primalac);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public static Seansa getSeansaById(int seansaId) {
+        String query = "select * from seansa where seansa_id=?";
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(query);
+            statement.setInt(1,seansaId);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                return getSeansaFromResultSet(rs);
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private static Objavljivanje getObjavljivanjeFromResultSet(ResultSet rs){
+        try {
+            Integer objavljivanje_id = rs.getInt("objavljivanje_id");
+            Integer seansa_id = rs.getInt("seansa_id");
+            String tip_objavljivanja = rs.getString("tip_objavljivanja");
+            return new Objavljivanje(objavljivanje_id,seansa_id,tip_objavljivanja);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-
+    public static ObservableList<Objavljivanje> getObjavljivanjaByPsihoterapeutId(int psihoterapeut_id){
+        String query = "select o.* from objavljivanje o join seansa s on o.seansa_id = s.seansa_id where s.psihoterapeut_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,psihoterapeut_id);
+            ResultSet rs = statement.executeQuery();
+            ObservableList<Objavljivanje> objavljivanja = FXCollections.observableArrayList();
+            while(rs.next()){
+                objavljivanja.add(getObjavljivanjeFromResultSet(rs));
+            }
+            return objavljivanja;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

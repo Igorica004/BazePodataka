@@ -1,10 +1,9 @@
 package view;
 
+import app.App;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -13,6 +12,8 @@ import utility.JDBCUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import static utility.JDBCUtils.daLiJeSeansaObjavljena;
 
 public class TabSeanse extends Tab {
 
@@ -49,7 +50,25 @@ public class TabSeanse extends Tab {
         sadrzaj.getChildren().addAll(hb);
         sadrzaj.setAlignment(Pos.TOP_CENTER);
 
-
+        HBox hbObjavljivanje = new HBox();
+        hbObjavljivanje.setSpacing(10);
+        hbObjavljivanje.setAlignment(Pos.CENTER);
+        TextField tfPrimalacObjavljivanja = new TextField();
+        Button btnObjavi = new Button("Objavi");
+        Label lbGreska = new Label();
+        btnObjavi.setOnAction(e -> {
+            Integer seansa_id = tv.getSelectionModel().getSelectedItem().getSeansa_id();
+            String primalac = tfPrimalacObjavljivanja.getText();
+            if(daLiJeSeansaObjavljena(seansa_id,primalac)){
+                lbGreska.setText("Seansa je vec objavljena za navedenog primaoca.");
+                return;
+            }
+            JDBCUtils.objaviSeansu(seansa_id,tfPrimalacObjavljivanja.getText());
+            lbGreska.setText("Uspesno objavljeno.");
+            App.tabObjavljivanja.tv.setItems(JDBCUtils.getObjavljivanjaByPsihoterapeutId(psihoterapeut_id));
+        });
+        hbObjavljivanje.getChildren().addAll(tfPrimalacObjavljivanja,btnObjavi,lbGreska);
+        sadrzaj.getChildren().add(hbObjavljivanje);
 
         this.setContent(sadrzaj);
         this.setText("Seanse");
